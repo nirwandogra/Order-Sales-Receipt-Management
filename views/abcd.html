@@ -1,0 +1,50 @@
+<html ng-app="" ng-controller="studentController">
+
+<head>
+    <title>Get Comments from Posts</title>
+</head>
+<link rel="stylesheet" href="css/style.css">
+
+<body>
+    <h1>UserName = {{user_id}}<h1><br><br>
+    <div ng-repeat="transaction in transactions" >
+     <h2> {{ transaction.id }}</h2>
+    </div>
+    <input  ng-model="transaction_new"></input>
+    <button  type="submit" ng-click="add_transaction()">Transaction</button>
+    <br>
+    <a href="/" ng-click="logout();return ">LOG OUT</a>
+  </body>
+</html>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular.min.js"></script>
+<script>
+function studentController($scope,$http) {
+  
+  $scope.id = 0;
+  $scope.transactions=[];
+   
+  angular.element(document).ready(function () {
+      $http.post("/gettransactions",{ }).success( function(response) {
+                   console.log(response);
+                   $scope.transactions= response;
+                 });
+            });
+  $scope.logout=function()
+  {
+        $http.post("/logout",{  }).success( function(response) {
+                
+              });
+  } 
+  $scope.add_transaction=function()
+    {
+      $scope.id +=1;
+      $scope.user_id=1;
+      var transaction = { 'id' : $scope.id ,'user_id':$scope.user_id,'description':$scope.transaction_new }
+      $http.post("/transaction/add",transaction).success( function(response) {
+                   if(response==true) {
+                    $scope.transactions.push(transaction);  
+                   }
+                 });
+    }
+}
+</script>
